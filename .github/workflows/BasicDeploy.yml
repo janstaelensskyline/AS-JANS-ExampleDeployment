@@ -38,5 +38,4 @@ jobs:
         echo "${{ steps.UploadDMAPP.outputs.uploadOutput }}"
         
     - name: Deploy DMAPP
-      run: dataminer-package-deploy from-catalog --artifact-id "${{ steps.UploadDMAPP.outputs.uploadOutput }}" --dm-catalog-token "${{ secrets.DATAMINER_DEPLOY_KEY }}"
-      shell: bash
+      run: dataminer-package-deploy from-catalog --artifact-id @"${{ steps.UploadDMAPP.outputs.uploadOutput }}"@ --dm-catalog-token "${{ secrets.DATAMINER_DEPLOY_KEY }}"
