@@ -19,9 +19,6 @@ steps:
 - script: dotnet tool install -g Skyline.DataMiner.CICD.Tools.DataMinerDeploy
   displayName: 'Install Catalog Deploy'
 
-- script: dotnet tool install -g Skyline.DataMiner.CICD.Tools.DataMinerDeploy
-  displayName: 'Install Catalog Deploy'
-
 - script: dataminer-package-create dmapp ${Agent.BuildDirectory} --name HelloFromAzure -o ${Agent.BuildDirectory} --type automation
   displayName: 'Create Package'
 
