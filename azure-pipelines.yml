@@ -24,7 +24,9 @@ steps:
 - script: dataminer-package-create dmapp $(Build.SourcesDirectory) --name HelloFromAzure -o $(Build.SourcesDirectory) --type automation
   displayName: 'Create Package'
 
-- script: $(uploadOutput) = dataminer-catalog-upload --path-to-artifact "$(Build.SourcesDirectory)/HelloFromAzure.dmapp" --dm-catalog-token $(DATAMINER_DEPLOY_KEY)
+- script: |
+    uploadOutput=$(dataminer-catalog-upload --path-to-artifact "$(Build.SourcesDirectory)/HelloFromAzure.dmapp" --dm-catalog-token $(DATAMINER_DEPLOY_KEY))
+    echo "##vso[task.setvariable variable=uploadOutput]$uploadOutput"
   displayName: 'Upload Package'
 
 - script: dataminer-package-deploy from-catalog --artifact-id $(uploadOutput) --dm-catalog-token $(DATAMINER_DEPLOY_KEY)
