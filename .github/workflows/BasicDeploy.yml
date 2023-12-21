@@ -25,12 +25,12 @@ jobs:
       run: dotnet tool install -g Skyline.DataMiner.CICD.Tools.DataMinerDeploy --version 1.0.1-Beta2
 
     - name: Create DMAPP
-      run: dataminer-package-create dmapp ${{ github.workspace }} --name HelloFromGithub -o ${{ github.workspace }} --type automation
+      run: dataminer-package-create dmapp ${{ github.workspace }} --name HelloFromGithubWindows -o ${{ github.workspace }} --type automation
 
     - name: Upload DMAPP
       id: UploadDMAPP
       run: |
-        echo "uploadOutput=$(dataminer-catalog-upload --path-to-artifact "${{ github.workspace }}\HelloFromGithub.dmapp" --dm-catalog-token ${{ secrets.DATAMINER_DEPLOY_KEY }})" >> $GITHUB_OUTPUT
+        echo "uploadOutput=$(dataminer-catalog-upload --path-to-artifact "${{ github.workspace }}\HelloFromGithubWindows.dmapp" --dm-catalog-token ${{ secrets.DATAMINER_DEPLOY_KEY }})" >> $GITHUB_OUTPUT
       shell: bash
       
     - name: Check Output
@@ -38,4 +38,5 @@ jobs:
         echo "${{ steps.UploadDMAPP.outputs.uploadOutput }}"
         
     - name: Deploy DMAPP
-      run: dataminer-package-deploy from-catalog --artifact-id @"\r\n${{ steps.UploadDMAPP.outputs.uploadOutput }}\r\n"@ --dm-catalog-token "${{ secrets.DATAMINER_DEPLOY_KEY }}"
+      run: dataminer-package-deploy from-catalog --artifact-id "${{ steps.UploadDMAPP.outputs.uploadOutput }}" --dm-catalog-token "${{ secrets.DATAMINER_DEPLOY_KEY }}"
+      shell: bash
