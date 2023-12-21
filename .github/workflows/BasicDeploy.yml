@@ -30,6 +30,11 @@ jobs:
     - name: UploadDMAPP
       run: |
         echo "uploadOutput=$(dataminer-catalog-upload --path-to-artifact "${{ github.workspace }}\HelloFromGithub.dmapp" --dm-catalog-token ${{ secrets.DATAMINER_DEPLOY_KEY }})" >> $GITHUB_OUTPUT
+      shell: bash
+      
+    - name: CheckOutput
+      run: |
+        echo "${{ steps.UploadDMAPP.outputs.uploadOutput }}"
         
     - name: DeployDMAPP
       run: dataminer-package-deploy from-catalog --artifact-id "${{ steps.UploadDMAPP.outputs.uploadOutput }}" --dm-catalog-token "${{ secrets.DATAMINER_DEPLOY_KEY }}"
