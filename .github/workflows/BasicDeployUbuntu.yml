@@ -1,0 +1,42 @@
+name: BasicDeploy
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  deployment:
+    runs-on: ubuntu-latest 
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        
+    - name: InstallPackageCreation
+      run: dotnet tool install -g Skyline.DataMiner.CICD.Tools.Packager
+    - name: Install Catalog Upload
+      run: dotnet tool install -g Skyline.DataMiner.CICD.Tools.CatalogUpload --version 1.1.1-Beta1
+    - name: Install DataMiner Deploy
+      run: dotnet tool install -g Skyline.DataMiner.CICD.Tools.DataMinerDeploy --version 1.0.1-Beta2
+
+    - name: Create DMAPP
+      run: dataminer-package-create dmapp ${{ github.workspace }} --name HelloFromGithubWindows -o ${{ github.workspace }} --type automation
+
+    - name: Upload DMAPP
+      id: UploadDMAPP
+      run: |
+        echo "uploadOutput=$(dataminer-catalog-upload --path-to-artifact "${{ github.workspace }}\HelloFromGithubWindows.dmapp" --dm-catalog-token ${{ secrets.DATAMINER_DEPLOY_KEY }})" >> $GITHUB_OUTPUT
+      shell: bash
+      
+    - name: Check Output
+      run: |
+        echo "${{ steps.UploadDMAPP.outputs.uploadOutput }}"
+        
+    - name: Deploy DMAPP
+      run: dataminer-package-deploy from-catalog --artifact-id "${{ steps.UploadDMAPP.outputs.uploadOutput }}" --dm-catalog-token "${{ secrets.DATAMINER_DEPLOY_KEY }}"
+      shell: bash
