@@ -24,17 +24,18 @@ jobs:
     - name: Install DataMiner Deploy
       run: dotnet tool install -g Skyline.DataMiner.CICD.Tools.DataMinerDeploy --version 1.0.1-Beta2
 
-    - name: CreateDMAPP
+    - name: Create DMAPP
       run: dataminer-package-create dmapp ${{ github.workspace }} --name HelloFromGithub -o ${{ github.workspace }} --type automation
 
-    - name: UploadDMAPP
+    - name: Upload DMAPP
+      id: UploadDMAPP
       run: |
         echo "uploadOutput=$(dataminer-catalog-upload --path-to-artifact "${{ github.workspace }}\HelloFromGithub.dmapp" --dm-catalog-token ${{ secrets.DATAMINER_DEPLOY_KEY }})" >> $GITHUB_OUTPUT
       shell: bash
       
-    - name: CheckOutput
+    - name: Check Output
       run: |
         echo "${{ steps.UploadDMAPP.outputs.uploadOutput }}"
         
-    - name: DeployDMAPP
+    - name: Deploy DMAPP
       run: dataminer-package-deploy from-catalog --artifact-id "${{ steps.UploadDMAPP.outputs.uploadOutput }}" --dm-catalog-token "${{ secrets.DATAMINER_DEPLOY_KEY }}"
