@@ -1,0 +1,34 @@
+name: .NET Core Desktop
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+    runs-on: windows-latest 
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        
+    - name: InstallPackageCreation
+      run: dotnet tool install -g Skyline.DataMiner.CICD.Tools.Packager
+    - name: Install Catalog Upload
+      run: dotnet tool install -g Skyline.DataMiner.CICD.Tools.CatalogUpload --version 1.1.1-Beta1
+    - name: Install DataMiner Deploy
+      run: dotnet tool install -g Skyline.DataMiner.CICD.Tools.DataMinerDeploy --version 1.0.1-Beta2
+
+    - name: CreateDMAPP
+      run: dataminer-package-create dmapp ${{ github.workspace }} --name HelloFromGithub -o ${{ github.workspace }} --type automation
+
+    - name: UploadDMAPP
+      run: uploadOutput=dataminer-catalog-upload --path-to-artifact "${{ github.workspace }}\HelloFromGithub.dmapp" --dm-catalog-token ${{ secrets.DATAMINER_DEPLOY_KEY }} >> $GITHUB_OUTPUT
+        
+    - name: DeployDMAPP
+      run: dataminer-package-deploy from-catalog --artifact-id steps.UploadDMAPP.outputs.uploadOutput --dm-catalog-token ${{ secrets.DATAMINER_DEPLOY_KEY }}
