@@ -1,0 +1,32 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: dotnet tool install -g Skyline.DataMiner.CICD.Tools.Packager
+  displayName: 'Install Packager'
+
+- script: dotnet tool install -g Skyline.DataMiner.CICD.Tools.CatalogUpload
+  displayName: 'Install Catalog Upload'
+
+- script: dotnet tool install -g Skyline.DataMiner.CICD.Tools.DataMinerDeploy
+  displayName: 'Install Catalog Deploy'
+
+- script: dotnet tool install -g Skyline.DataMiner.CICD.Tools.DataMinerDeploy
+  displayName: 'Install Catalog Deploy'
+
+- script: dataminer-package-create dmapp ${Agent.BuildDirectory} --name HelloFromAzure -o ${Agent.BuildDirectory} --type automation
+  displayName: 'Create Package'
+
+- script: $(uploadOutput) = dataminer-catalog-upload --path-to-artifact "${Agent.BuildDirectory}/HelloFromAzure.dmapp" --dm-catalog-token $(DATAMINER_DEPLOY_KEY)
+  displayName: 'Upload Package'
+
+- script: dataminer-package-deploy from-catalog --artifact-id $(uploadOutput) --dm-catalog-token $(DATAMINER_DEPLOY_KEY)
+  displayName: 'Deploy Package'
