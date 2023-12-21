@@ -1,4 +1,4 @@
-name: .NET Core Desktop
+name: BasicDeploy
 
 on:
   push:
@@ -32,4 +32,4 @@ jobs:
         echo "uploadOutput=$(dataminer-catalog-upload --path-to-artifact "${{ github.workspace }}\HelloFromGithub.dmapp" --dm-catalog-token ${{ secrets.DATAMINER_DEPLOY_KEY }})" >> $GITHUB_OUTPUT
         
     - name: DeployDMAPP
-      run: dataminer-package-deploy from-catalog --artifact-id steps.UploadDMAPP.outputs.uploadOutput --dm-catalog-token ${{ secrets.DATAMINER_DEPLOY_KEY }}
+      run: dataminer-package-deploy from-catalog --artifact-id "${{ steps.UploadDMAPP.outputs.uploadOutput }}" --dm-catalog-token ${{ secrets.DATAMINER_DEPLOY_KEY }}
