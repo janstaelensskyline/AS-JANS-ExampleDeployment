@@ -16,16 +16,13 @@ jobs:
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
-    - name: Install .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 6.0.x  
+
     - name: InstallPackageCreation
       run: dotnet tool install -g Skyline.DataMiner.CICD.Tools.Packager
     - name: Install Catalog Upload
-      run: dotnet tool install -g Skyline.DataMiner.CICD.Tools.CatalogUpload --version 1.1.1-Beta1
+      run: dotnet tool install -g Skyline.DataMiner.CICD.Tools.CatalogUpload --version 1.1.1-Beta1 --prerelease
     - name: Install DataMiner Deploy
-      run: dotnet tool install -g Skyline.DataMiner.CICD.Tools.DataMinerDeploy --version 1.0.1-Beta2
+      run: dotnet tool install -g Skyline.DataMiner.CICD.Tools.DataMinerDeploy --version 1.0.1-Beta2 --prerelease
 
     - name: Create DMAPP
       run: dataminer-package-create dmapp ${{ github.workspace }} --name HelloFromGithubWindows -o ${{ github.workspace }} --type automation
