@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  build:
+  deployment:
     runs-on: windows-latest 
     
     steps:
@@ -28,7 +28,8 @@ jobs:
       run: dataminer-package-create dmapp ${{ github.workspace }} --name HelloFromGithub -o ${{ github.workspace }} --type automation
 
     - name: UploadDMAPP
-      run: uploadOutput=dataminer-catalog-upload --path-to-artifact "${{ github.workspace }}\HelloFromGithub.dmapp" --dm-catalog-token ${{ secrets.DATAMINER_DEPLOY_KEY }} >> $GITHUB_OUTPUT
+      run: |
+        echo "uploadOutput=$(dataminer-catalog-upload --path-to-artifact "${{ github.workspace }}\HelloFromGithub.dmapp" --dm-catalog-token ${{ secrets.DATAMINER_DEPLOY_KEY }})" >> $GITHUB_OUTPUT
         
     - name: DeployDMAPP
       run: dataminer-package-deploy from-catalog --artifact-id steps.UploadDMAPP.outputs.uploadOutput --dm-catalog-token ${{ secrets.DATAMINER_DEPLOY_KEY }}
