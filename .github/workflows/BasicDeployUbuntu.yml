@@ -1,4 +1,4 @@
-name: BasicDeploy
+name: BasicDeployUbuntu
 
 on:
   push:
