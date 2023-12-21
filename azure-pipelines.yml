@@ -21,10 +21,10 @@ steps:
 - script: dotnet tool install -g Skyline.DataMiner.CICD.Tools.DataMinerDeploy
   displayName: 'Install Catalog Deploy'
 
-- script: dataminer-package-create dmapp $(Agent.BuildDirectory) --name HelloFromAzure -o $(Agent.BuildDirectory) --type automation
+- script: dataminer-package-create dmapp $(Build.SourcesDirectory) --name HelloFromAzure -o $(Build.SourcesDirectory) --type automation
   displayName: 'Create Package'
 
-- script: $(uploadOutput) = dataminer-catalog-upload --path-to-artifact "$(Agent.BuildDirectory)/HelloFromAzure.dmapp" --dm-catalog-token $(DATAMINER_DEPLOY_KEY)
+- script: $(uploadOutput) = dataminer-catalog-upload --path-to-artifact "$(Build.SourcesDirectory)/HelloFromAzure.dmapp" --dm-catalog-token $(DATAMINER_DEPLOY_KEY)
   displayName: 'Upload Package'
 
 - script: dataminer-package-deploy from-catalog --artifact-id $(uploadOutput) --dm-catalog-token $(DATAMINER_DEPLOY_KEY)
